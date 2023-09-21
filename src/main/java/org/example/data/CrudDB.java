@@ -1,8 +1,8 @@
 package org.example.data;
 
 import org.apache.log4j.Logger;
-import org.example.App;
-import org.flywaydb.core.Flyway;
+import org.example.Migration;
+
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -32,20 +32,10 @@ public class CrudDB implements Closeable {
             ");";
 
 
-    private void flywayMigration(){
-        logger.debug("Flyway migration execute");
+    public CrudDB connect() throws SQLException {
+        logger.info("Crud connected to database");
 
-        Flyway.configure()
-                .dataSource(URL,USERNAME, PASSWORD)
-                .locations("classpath:flyway/scripts")
-                .load()
-                .migrate();
-    }
-
-    public CrudDB init() throws SQLException {
-        logger.info("Crud has initialized");
-
-        flywayMigration();
+        Migration.flywayMigration();
 
         connection = DriverManager.getConnection(URL,USERNAME, PASSWORD);
 
