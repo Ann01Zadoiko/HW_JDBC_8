@@ -1,7 +1,6 @@
 package org.example.data;
 
 import org.apache.log4j.Logger;
-import org.example.Migration;
 
 
 import java.io.Closeable;
