@@ -2,21 +2,16 @@ package org.example.data;
 
 import org.apache.log4j.Logger;
 
-
-import java.io.Closeable;
-import java.io.IOException;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.example.Config.*;
+import static org.example.data.ConnectionDB.connection;
 
-public class CrudDB implements Closeable {
+public class CrudDB {
 
     private static final Logger logger = Logger.getLogger(CrudDB.class);
-    private Connection connection = null;
-    private static final String QUERY = "select *\n" +
-            "from homework_7.osbb o\n" +
+    private static final String QUERY = "select *\n" + "from homework_7.osbb o\n" +
             "left join homework_7.rights_of_ownership roo on o.id = roo.id_osbb\n" +
             "join homework_7.rights_to_entry rte on roo.id_right = rte.id\n" +
             "join homework_7.buildings_flats bf on roo.id_building_flat = bf.id\n" +
@@ -30,28 +25,7 @@ public class CrudDB implements Closeable {
             "having count(roo.id_building_flat) < 2\n" +
             ");";
 
-
-    public CrudDB connect() throws SQLException {
-        logger.info("Crud connected to database");
-
-        Migration.flywayMigration();
-
-        connection = DriverManager.getConnection(URL,USERNAME, PASSWORD);
-
-        return this;
-    }
-
-    @Override
-    public void close() throws IOException {
-        try {
-            connection.close();
-            connection = null;
-        } catch (SQLException e){
-            throw new IOException(e);
-        }
-    }
-
-    public List<Osbb> getOsbb() throws SQLException{
+    private List<Osbb> getOsbb() throws SQLException{
         logger.trace("Call getting list of osbb");
 
         final List<Osbb> result = new LinkedList<>();
@@ -72,5 +46,13 @@ public class CrudDB implements Closeable {
 
         }
         return result;
+    }
+
+    public void printList() throws SQLException {
+        for (Osbb osbb : new CrudDB().getOsbb()){
+            System.out.printf("%-10s %-12s : %-35s : %-27s : %d : %d%n",
+                    osbb.getFirstName(), osbb.getLastName(), osbb.getEmail(), osbb.getAddress(),
+                    osbb.getNumberOfFlat(), osbb.getSqrOfFlat());
+        }
     }
 }

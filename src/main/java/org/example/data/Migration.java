@@ -9,9 +9,6 @@ public class Migration {
 
     private static final Logger logger = Logger.getLogger(Migration.class);
 
-    /**
-     * Private constructor to prevent the instantiation of the DatabaseMigration class.
-     */
     private Migration() {}
 
     public static void flywayMigration() {
